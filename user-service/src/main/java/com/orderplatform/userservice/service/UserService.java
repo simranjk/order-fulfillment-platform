@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.orderplatform.userservice.exception.DuplicateEmailException;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -37,6 +39,13 @@ public class UserService {
       .orElseThrow(() -> new RuntimeException("User not found"));
 
     return UserMapper.toResponse(user);
+  }
+
+  public List<UserResponse> getAllUsers() {
+    return userRepository.findAll()
+      .stream()
+      .map(UserMapper::toResponse)
+      .toList();
   }
 
 
