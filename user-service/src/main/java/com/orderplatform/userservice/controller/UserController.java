@@ -34,4 +34,18 @@ public class UserController {
   public List<UserResponse> getAllUsers() {
     return userService.getAllUsers();
   }
+
+  @PutMapping("/{id}")
+  public UserResponse updateUser(
+    @PathVariable Long id,
+    @Valid @RequestBody UserRequest request) {
+
+    return userService.updateUser(id, request);
+  }
+
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteUser(@PathVariable Long id) {
+    userService.deleteUser(id);
+  }
 }
