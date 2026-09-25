@@ -28,7 +28,8 @@ public class UserClient {
     } catch (RestClientResponseException e) {
 
       if (e.getStatusCode().value() == 404) {
-        throw new UserNotFoundException(userId);
+        throw new UserNotFoundException(
+          "User not found: " + userId);
       }
 
       throw e;

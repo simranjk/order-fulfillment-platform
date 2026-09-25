@@ -106,7 +106,8 @@ public class OrderService {
 
     Order order = orderRepository.findById(orderId)
       .orElseThrow(() ->
-        new OrderNotFoundException(orderId));
+        new OrderNotFoundException(
+          "Order not found: " + orderId));
 
     return toResponse(order);
   }
