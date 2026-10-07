@@ -11,7 +11,7 @@ public class Inventory {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String productId;
+    private Long productId;
 
     @Column(nullable = false)
     private Integer availableQuantity;
@@ -23,11 +23,11 @@ public class Inventory {
         return id;
     }
 
-    public String getProductId() {
+    public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(String productId) {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 
@@ -47,4 +47,3 @@ public class Inventory {
         this.reservedQuantity = reservedQuantity;
     }
 }
-

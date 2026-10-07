@@ -1,6 +1,5 @@
 package com.orderplatform.inventoryservice.controller;
 
-import com.orderplatform.inventoryservice.controller.InventoryController;
 import com.orderplatform.inventoryservice.dto.InventoryResponse;
 import com.orderplatform.inventoryservice.exception.GlobalExceptionHandler;
 import com.orderplatform.inventoryservice.exception.InsufficientInventoryException;
@@ -34,14 +33,14 @@ class InventoryControllerTest {
     void shouldCreateInventory() throws Exception {
 
         InventoryResponse response =
-                new InventoryResponse("PROD-1001", 100, 0);
+                new InventoryResponse(1001L, 100, 0);
 
         when(inventoryService.createInventory(any()))
                 .thenReturn(response);
 
         String request = """
                 {
-                    "productId": "PROD-1001",
+                    "productId": 1001,
                     "quantity": 100
                 }
                 """;
@@ -51,7 +50,7 @@ class InventoryControllerTest {
                         .content(request))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.productId")
-                        .value("PROD-1001"))
+                        .value(1001))
                 .andExpect(jsonPath("$.availableQuantity")
                         .value(100))
                 .andExpect(jsonPath("$.reservedQuantity")
@@ -62,16 +61,16 @@ class InventoryControllerTest {
     void shouldGetInventory() throws Exception {
 
         InventoryResponse response =
-                new InventoryResponse("PROD-1001", 95, 5);
+                new InventoryResponse(1001L, 95, 5);
 
-        when(inventoryService.getInventory("PROD-1001"))
+        when(inventoryService.getInventory(1001L))
                 .thenReturn(response);
 
         mockMvc.perform(
-                get("/api/v1/inventory/PROD-1001"))
+                get("/api/v1/inventory/1001"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.productId")
-                        .value("PROD-1001"))
+                        .value(1001))
                 .andExpect(jsonPath("$.availableQuantity")
                         .value(95))
                 .andExpect(jsonPath("$.reservedQuantity")
@@ -82,10 +81,10 @@ class InventoryControllerTest {
     void shouldReserveInventory() throws Exception {
 
         InventoryResponse response =
-                new InventoryResponse("PROD-1001", 95, 5);
+                new InventoryResponse(1001L, 95, 5);
 
         when(inventoryService.reserveInventory(
-                eq("PROD-1001"), any()))
+                eq(1001L), any()))
                 .thenReturn(response);
 
         String request = """
@@ -95,7 +94,7 @@ class InventoryControllerTest {
                 """;
 
         mockMvc.perform(
-                post("/api/v1/inventory/PROD-1001/reserve")
+                post("/api/v1/inventory/1001/reserve")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isOk())
@@ -109,10 +108,10 @@ class InventoryControllerTest {
     void shouldReleaseInventory() throws Exception {
 
         InventoryResponse response =
-                new InventoryResponse("PROD-1001", 100, 0);
+                new InventoryResponse(1001L, 100, 0);
 
         when(inventoryService.releaseInventory(
-                eq("PROD-1001"), any()))
+                eq(1001L), any()))
                 .thenReturn(response);
 
         String request = """
@@ -122,7 +121,7 @@ class InventoryControllerTest {
                 """;
 
         mockMvc.perform(
-                post("/api/v1/inventory/PROD-1001/release")
+                post("/api/v1/inventory/1001/release")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isOk())
@@ -136,12 +135,12 @@ class InventoryControllerTest {
     void shouldReturnNotFoundWhenInventoryDoesNotExist()
             throws Exception {
 
-        when(inventoryService.getInventory("PROD-9999"))
+        when(inventoryService.getInventory(9999L))
                 .thenThrow(new InventoryNotFoundException(
-                        "Inventory not found for product: PROD-9999"));
+                        "Inventory not found for product: 9999"));
 
         mockMvc.perform(
-                get("/api/v1/inventory/PROD-9999"))
+                get("/api/v1/inventory/9999"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error")
                         .value("INVENTORY_NOT_FOUND"));
@@ -152,9 +151,9 @@ class InventoryControllerTest {
             throws Exception {
 
         when(inventoryService.reserveInventory(
-                eq("PROD-1001"), any()))
+                eq(1001L), any()))
                 .thenThrow(new InsufficientInventoryException(
-                        "Insufficient inventory for product: PROD-1001"));
+                        "Insufficient inventory for product: 1001"));
 
         String request = """
                 {
@@ -163,7 +162,7 @@ class InventoryControllerTest {
                 """;
 
         mockMvc.perform(
-                post("/api/v1/inventory/PROD-1001/reserve")
+                post("/api/v1/inventory/1001/reserve")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isConflict())
@@ -181,7 +180,7 @@ class InventoryControllerTest {
                 """;
 
         mockMvc.perform(
-                post("/api/v1/inventory/PROD-1001/reserve")
+                post("/api/v1/inventory/1001/reserve")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isBadRequest())

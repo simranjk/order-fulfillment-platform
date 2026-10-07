@@ -1,6 +1,7 @@
 package com.orderplatform.orderservice.client;
 
 import com.orderplatform.orderservice.dto.ProductResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -9,9 +10,9 @@ public class ProductClient {
 
   private final RestClient restClient;
 
-  public ProductClient() {
+  public ProductClient(@Value("${services.product-service.url:http://localhost:8082}") String productServiceUrl) {
     this.restClient = RestClient.builder()
-      .baseUrl("http://localhost:8082")
+      .baseUrl(productServiceUrl)
       .build();
   }
 

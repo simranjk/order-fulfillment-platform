@@ -28,14 +28,14 @@ public class InventoryController {
 
     @GetMapping("/{productId}")
     public InventoryResponse getInventory(
-            @PathVariable String productId) {
+            @PathVariable Long productId) {
 
         return inventoryService.getInventory(productId);
     }
 
     @PostMapping("/{productId}/reserve")
     public InventoryResponse reserveInventory(
-            @PathVariable String productId,
+            @PathVariable Long productId,
             @Valid @RequestBody InventoryQuantityRequest request) {
 
         return inventoryService.reserveInventory(productId, request);
@@ -43,7 +43,7 @@ public class InventoryController {
 
     @PostMapping("/{productId}/release")
     public InventoryResponse releaseInventory(
-            @PathVariable String productId,
+            @PathVariable Long productId,
             @Valid @RequestBody InventoryQuantityRequest request) {
 
         return inventoryService.releaseInventory(productId, request);

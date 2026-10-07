@@ -2,73 +2,80 @@ package com.orderplatform.inventoryservice.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(InventoryNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleInventoryNotFound(
-            InventoryNotFoundException exception) {
+  @ExceptionHandler(InventoryNotFoundException.class)
+  public ProblemDetail handleInventoryNotFound(InventoryNotFoundException exception) {
+    ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+      HttpStatus.NOT_FOUND,
+      exception.getMessage()
+    );
+    problem.setTitle("Inventory Not Found");
+    problem.setProperty("error", "INVENTORY_NOT_FOUND");
+    problem.setProperty("timestamp", Instant.now());
+    return problem;
+  }
 
-        return Map.of(
-                "error", "INVENTORY_NOT_FOUND",
-                "message", exception.getMessage()
-        );
-    }
+  @ExceptionHandler(InsufficientInventoryException.class)
+  public ProblemDetail handleInsufficientInventory(InsufficientInventoryException exception) {
+    ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+      HttpStatus.CONFLICT,
+      exception.getMessage()
+    );
+    problem.setTitle("Insufficient Inventory");
+    problem.setProperty("error", "INSUFFICIENT_INVENTORY");
+    problem.setProperty("timestamp", Instant.now());
+    return problem;
+  }
 
-    @ExceptionHandler(InsufficientInventoryException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, String> handleInsufficientInventory(
-            InsufficientInventoryException exception) {
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ProblemDetail handleIllegalArgument(IllegalArgumentException exception) {
+    ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+      HttpStatus.BAD_REQUEST,
+      exception.getMessage()
+    );
+    problem.setTitle("Bad Request");
+    problem.setProperty("error", "BAD_REQUEST");
+    problem.setProperty("timestamp", Instant.now());
+    return problem;
+  }
 
-        return Map.of(
-                "error", "INSUFFICIENT_INVENTORY",
-                "message", exception.getMessage()
-        );
-    }
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ProblemDetail handleValidationException(MethodArgumentNotValidException exception) {
+    ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+      HttpStatus.BAD_REQUEST,
+      "Validation failed for request"
+    );
+    problem.setTitle("Validation Error");
+    Map<String, String> fieldErrors = new HashMap<>();
+    exception.getBindingResult().getFieldErrors().forEach(error ->
+      fieldErrors.put(error.getField(), error.getDefaultMessage())
+    );
+    problem.setProperty("errors", fieldErrors);
+    problem.setProperty("error", "VALIDATION_ERROR");
+    problem.setProperty("timestamp", Instant.now());
+    return problem;
+  }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleIllegalArgument(
-            IllegalArgumentException exception) {
-
-        return Map.of(
-                "error", "BAD_REQUEST",
-                "message", exception.getMessage()
-        );
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidation(
-      MethodArgumentNotValidException exception) {
-
-        String message = exception.getBindingResult()
-          .getFieldErrors()
-          .stream()
-          .findFirst()
-          .map(error -> error.getField() + ": " + error.getDefaultMessage())
-          .orElse("Invalid request");
-
-        return Map.of(
-          "error", "VALIDATION_ERROR",
-          "message", message
-        );
-    }
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, String> handleDataIntegrityViolation(
-      DataIntegrityViolationException exception) {
-        return Map.of(
-          "error", "INVENTORY_ALREADY_EXISTS",
-          "message", "Inventory already exists for this product"
-        );
-    }
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException exception) {
+    ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+      HttpStatus.CONFLICT,
+      "Inventory already exists for this product"
+    );
+    problem.setTitle("Inventory Already Exists");
+    problem.setProperty("error", "INVENTORY_ALREADY_EXISTS");
+    problem.setProperty("timestamp", Instant.now());
+    return problem;
+  }
 }

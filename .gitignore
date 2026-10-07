@@ -5,10 +5,18 @@ build/
 
 # IntelliJ IDEA
 .idea/
+**/.idea/
 *.iml
+**/*.iml
+
+# Eclipse
+.project
+.classpath
+.settings/
 
 # OS
 .DS_Store
+**/.DS_Store
 
 # Logs
 *.log

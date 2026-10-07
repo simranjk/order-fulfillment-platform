@@ -4,17 +4,10 @@ plugins {
     id 'io.spring.dependency-management'
 }
 
-group = 'com.orderplatform'
-version = '0.0.1-SNAPSHOT'
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
-}
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
@@ -31,7 +24,7 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.boot:spring-boot-webmvc-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 }
 
 tasks.named('test') {

@@ -2,6 +2,7 @@ package com.orderplatform.orderservice.client;
 
 import com.orderplatform.orderservice.dto.UserResponse;
 import com.orderplatform.orderservice.exception.UserNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
@@ -11,9 +12,9 @@ public class UserClient {
 
   private final RestClient restClient;
 
-  public UserClient() {
+  public UserClient(@Value("${services.user-service.url:http://localhost:8081}") String userServiceUrl) {
     this.restClient = RestClient.builder()
-      .baseUrl("http://localhost:8081")
+      .baseUrl(userServiceUrl)
       .build();
   }
 

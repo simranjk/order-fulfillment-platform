@@ -31,7 +31,7 @@ public class InventoryService {
         return toResponse(savedInventory);
     }
 
-    public InventoryResponse getInventory(String productId) {
+    public InventoryResponse getInventory(Long productId) {
 
         Inventory inventory = findByProductId(productId);
 
@@ -39,7 +39,7 @@ public class InventoryService {
     }
 
     public InventoryResponse reserveInventory(
-            String productId,
+            Long productId,
             InventoryQuantityRequest request) {
 
         Inventory inventory = findByProductId(productId);
@@ -61,7 +61,7 @@ public class InventoryService {
     }
 
     public InventoryResponse releaseInventory(
-            String productId,
+            Long productId,
             InventoryQuantityRequest request) {
 
         Inventory inventory = findByProductId(productId);
@@ -82,7 +82,7 @@ public class InventoryService {
         return toResponse(savedInventory);
     }
 
-    private Inventory findByProductId(String productId) {
+    private Inventory findByProductId(Long productId) {
 
         return inventoryRepository.findByProductId(productId)
                 .orElseThrow(() ->

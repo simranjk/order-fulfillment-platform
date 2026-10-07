@@ -1,23 +1,22 @@
 package com.orderplatform.inventoryservice.dto;
 
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class InventoryCreateRequest {
 
-    @NotBlank
-    private String productId;
+    @NotNull
+    private Long productId;
 
     @NotNull
     @Min(0)
     private Integer quantity;
 
-    public String getProductId() {
+    public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(String productId) {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 

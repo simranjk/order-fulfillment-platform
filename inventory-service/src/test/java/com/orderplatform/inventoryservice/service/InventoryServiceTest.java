@@ -33,7 +33,7 @@ class InventoryServiceTest {
     @BeforeEach
     void setUp() {
         inventory = new Inventory();
-        inventory.setProductId("PROD-1001");
+        inventory.setProductId(1001L);
         inventory.setAvailableQuantity(100);
         inventory.setReservedQuantity(0);
     }
@@ -42,7 +42,7 @@ class InventoryServiceTest {
     void shouldCreateInventory() {
 
         InventoryCreateRequest request = new InventoryCreateRequest();
-        request.setProductId("PROD-1001");
+        request.setProductId(1001L);
         request.setQuantity(100);
 
         when(inventoryRepository.save(any(Inventory.class)))
@@ -51,7 +51,7 @@ class InventoryServiceTest {
         InventoryResponse response =
                 inventoryService.createInventory(request);
 
-        assertEquals("PROD-1001", response.getProductId());
+        assertEquals(1001L, response.getProductId());
         assertEquals(100, response.getAvailableQuantity());
         assertEquals(0, response.getReservedQuantity());
 
@@ -61,13 +61,13 @@ class InventoryServiceTest {
     @Test
     void shouldGetInventory() {
 
-        when(inventoryRepository.findByProductId("PROD-1001"))
+        when(inventoryRepository.findByProductId(1001L))
                 .thenReturn(Optional.of(inventory));
 
         InventoryResponse response =
-                inventoryService.getInventory("PROD-1001");
+                inventoryService.getInventory(1001L);
 
-        assertEquals("PROD-1001", response.getProductId());
+        assertEquals(1001L, response.getProductId());
         assertEquals(100, response.getAvailableQuantity());
         assertEquals(0, response.getReservedQuantity());
     }
@@ -75,12 +75,12 @@ class InventoryServiceTest {
     @Test
     void shouldThrowExceptionWhenInventoryNotFound() {
 
-        when(inventoryRepository.findByProductId("PROD-9999"))
+        when(inventoryRepository.findByProductId(9999L))
                 .thenReturn(Optional.empty());
 
         assertThrows(
                 InventoryNotFoundException.class,
-                () -> inventoryService.getInventory("PROD-9999")
+                () -> inventoryService.getInventory(9999L)
         );
     }
 
@@ -90,7 +90,7 @@ class InventoryServiceTest {
         InventoryQuantityRequest request = new InventoryQuantityRequest();
         request.setQuantity(5);
 
-        when(inventoryRepository.findByProductId("PROD-1001"))
+        when(inventoryRepository.findByProductId(1001L))
                 .thenReturn(Optional.of(inventory));
 
         when(inventoryRepository.save(any(Inventory.class)))
@@ -98,7 +98,7 @@ class InventoryServiceTest {
 
         InventoryResponse response =
                 inventoryService.reserveInventory(
-                        "PROD-1001",
+                        1001L,
                         request);
 
         assertEquals(95, response.getAvailableQuantity());
@@ -113,13 +113,13 @@ class InventoryServiceTest {
         InventoryQuantityRequest request = new InventoryQuantityRequest();
         request.setQuantity(101);
 
-        when(inventoryRepository.findByProductId("PROD-1001"))
+        when(inventoryRepository.findByProductId(1001L))
                 .thenReturn(Optional.of(inventory));
 
         assertThrows(
                 InsufficientInventoryException.class,
                 () -> inventoryService.reserveInventory(
-                        "PROD-1001",
+                        1001L,
                         request)
         );
 
@@ -135,7 +135,7 @@ class InventoryServiceTest {
         InventoryQuantityRequest request = new InventoryQuantityRequest();
         request.setQuantity(5);
 
-        when(inventoryRepository.findByProductId("PROD-1001"))
+        when(inventoryRepository.findByProductId(1001L))
                 .thenReturn(Optional.of(inventory));
 
         when(inventoryRepository.save(any(Inventory.class)))
@@ -143,7 +143,7 @@ class InventoryServiceTest {
 
         InventoryResponse response =
                 inventoryService.releaseInventory(
-                        "PROD-1001",
+                        1001L,
                         request);
 
         assertEquals(100, response.getAvailableQuantity());
@@ -158,13 +158,13 @@ class InventoryServiceTest {
         InventoryQuantityRequest request = new InventoryQuantityRequest();
         request.setQuantity(5);
 
-        when(inventoryRepository.findByProductId("PROD-1001"))
+        when(inventoryRepository.findByProductId(1001L))
                 .thenReturn(Optional.of(inventory));
 
         assertThrows(
                 IllegalArgumentException.class,
                 () -> inventoryService.releaseInventory(
-                        "PROD-1001",
+                        1001L,
                         request)
         );
 
