@@ -1,5 +1,7 @@
-package com.orderplatform.orderservice.entity;
 
+  package com.orderplatform.orderservice.entity;
+
+import com.orderplatform.orderservice.exception.InvalidOrderStateException;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -20,7 +22,7 @@ public class Order {
   private BigDecimal totalAmount;
 
   @Enumerated(EnumType.STRING)
-  private OrderStatus status;
+  private OrderStatus status = OrderStatus.CREATED;
 
   private LocalDateTime createdAt;
 
@@ -38,6 +40,32 @@ public class Order {
     if (status == null) {
       status = OrderStatus.CREATED;
     }
+  }
+
+  public void transitionTo(OrderStatus newStatus) {
+    if (newStatus == null) {
+      throw new IllegalArgumentException("Target order status cannot be null");
+    }
+
+    if (this.status == null) {
+      this.status = OrderStatus.CREATED;
+    }
+
+    if (!this.status.canTransitionTo(newStatus)) {
+      throw new InvalidOrderStateException(
+        String.format(
+          "Cannot transition order from %s to %s",
+          this.status,
+          newStatus
+        )
+      );
+    }
+
+    this.status = newStatus;
+  }
+
+  public void cancel() {
+    transitionTo(OrderStatus.CANCELLED);
   }
 
   public Long getId() {
@@ -62,10 +90,6 @@ public class Order {
 
   public OrderStatus getStatus() {
     return status;
-  }
-
-  public void setStatus(OrderStatus status) {
-    this.status = status;
   }
 
   public LocalDateTime getCreatedAt() {

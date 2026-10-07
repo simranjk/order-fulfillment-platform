@@ -72,4 +72,15 @@ public class GlobalExceptionHandler {
     problem.setProperty("timestamp", Instant.now());
     return problem;
   }
+
+  @ExceptionHandler(InvalidOrderStateException.class)
+  public ProblemDetail handleInvalidOrderState(InvalidOrderStateException exception) {
+    ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+      HttpStatus.CONFLICT,
+      exception.getMessage()
+    );
+    problem.setTitle("Invalid Order State");
+    problem.setProperty("timestamp", Instant.now());
+    return problem;
+  }
 }
