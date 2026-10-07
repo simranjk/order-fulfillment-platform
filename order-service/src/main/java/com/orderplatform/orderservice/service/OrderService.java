@@ -9,6 +9,7 @@ import com.orderplatform.orderservice.dto.OrderResponse;
 import com.orderplatform.orderservice.dto.ProductResponse;
 import com.orderplatform.orderservice.entity.Order;
 import com.orderplatform.orderservice.entity.OrderItem;
+import com.orderplatform.orderservice.entity.OrderStatus;
 import com.orderplatform.orderservice.exception.InsufficientStockException;
 import com.orderplatform.orderservice.exception.OrderNotFoundException;
 import com.orderplatform.orderservice.exception.ProductNotFoundException;
@@ -126,6 +127,36 @@ public class OrderService {
     return responses;
   }
 
+  @Transactional
+  public OrderResponse cancelOrder(Long orderId) {
+
+    Order order = orderRepository.findById(orderId)
+      .orElseThrow(() ->
+        new OrderNotFoundException(
+          "Order not found: " + orderId));
+
+    order.cancel();
+
+    Order savedOrder = orderRepository.save(order);
+
+    return toResponse(savedOrder);
+  }
+
+  @Transactional
+  public OrderResponse updateOrderStatus(Long orderId, OrderStatus newStatus) {
+
+    Order order = orderRepository.findById(orderId)
+      .orElseThrow(() ->
+        new OrderNotFoundException(
+          "Order not found: " + orderId));
+
+    order.transitionTo(newStatus);
+
+    Order savedOrder = orderRepository.save(order);
+
+    return toResponse(savedOrder);
+  }
+
   private OrderResponse toResponse(Order order) {
 
     List<OrderItemResponse> itemResponses = new ArrayList<>();
@@ -151,20 +182,3 @@ public class OrderService {
     );
   }
 }
-      //Create Order
-//     ↓
-//For each product
-//     ↓
-//Call Product Service
-//     ↓
-//Check active
-//     ↓
-//Check stock
-//     ↓
-//Get current price
-//     ↓
-//Save price snapshot in OrderItem
-//     ↓
-//Calculate total
-//     ↓
-//Save Order

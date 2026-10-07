@@ -2,6 +2,7 @@ package com.orderplatform.orderservice.controller;
 
 import com.orderplatform.orderservice.dto.CreateOrderRequest;
 import com.orderplatform.orderservice.dto.OrderResponse;
+import com.orderplatform.orderservice.dto.UpdateOrderStatusRequest;
 import com.orderplatform.orderservice.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -40,13 +41,22 @@ public class OrderController {
 
     return orderService.getOrdersByUserId(userId);
   }
+
+  @PostMapping("/{id}/cancel")
+  public OrderResponse cancelOrder(@PathVariable Long id) {
+    return orderService.cancelOrder(id);
+  }
+
+  @PatchMapping("/{id}/cancel")
+  public OrderResponse cancelOrderPatch(@PathVariable Long id) {
+    return orderService.cancelOrder(id);
+  }
+
+  @PatchMapping("/{id}/status")
+  public OrderResponse updateOrderStatus(
+    @PathVariable Long id,
+    @Valid @RequestBody UpdateOrderStatusRequest request) {
+
+    return orderService.updateOrderStatus(id, request.getStatus());
+  }
 }
-
-
-//This gives us three APIs:
-
-//| Method | Endpoint                       | Purpose           |
-//| ------ | ------------------------------ | ----------------- |
-//| `POST` | `/api/v1/orders`               | Create order      |
-//| `GET`  | `/api/v1/orders/{id}`          | Get one order     |
-//| `GET`  | `/api/v1/orders/user/{userId}` | Get user's orders |
